@@ -2,11 +2,15 @@ package jota.kalebe.appmemedemo.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import jota.kalebe.appmemedemo.R
 import jota.kalebe.appmemedemo.model.MemeHttp
 import jota.kalebe.appmemedemo.ui.adapter.MemeListAdapter
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,17 +20,17 @@ class MainActivity : AppCompatActivity() {
         val layoutManager = LinearLayoutManager(this)
 
         recyclerview.layoutManager = layoutManager
-        object : Thread() {
-            override fun run() {
-                super.run()
-                val result = MemeHttp.loadList()
-                runOnUiThread {
-                    result?.data?.memes?.let {
-                        recyclerview.adapter = MemeListAdapter(it)
-                    }
-                }
+
+        lifecycleScope.launch {
+            val result = withContext(Dispatchers.IO){
+                MemeHttp.loadList()
             }
-        }.start()
+
+                result?.data?.memes?.let {
+                    recyclerview.adapter = MemeListAdapter(it)
+                }
+
+        }
 
     }
 }
