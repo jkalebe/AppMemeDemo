@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">AppMemeDemo</string>
+    <string name="tab_meme">Memes</string>
+    <string name="tab_favorites">Editados</string>
 </resources>
